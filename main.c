@@ -1,11 +1,32 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 //Function Definitions
 void displayMenu();
+void loadData();
+
+struct listNode {
+    char item_name[30];
+
+    struct listNode *next;
+    struct listNode *prev;
+};
+typedef struct listNode ListNode;
+
 int main() {
-   displayMenu();
+    displayMenu();
+
+
 }
 
+
+void loadData(){
+    ListNode* list1 = malloc(sizeof(ListNode));
+    strcpy(list1->item_name, "Abey:");
+    list1->next = NULL;
+}
 void displayMenu(){
 
     int choice;
