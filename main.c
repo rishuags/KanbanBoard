@@ -28,6 +28,7 @@ typedef struct item Item;
 
 int main() {
     displayMenu();
+    printf("lhsfa");
     return 0;
 }
 
