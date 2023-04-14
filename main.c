@@ -53,7 +53,7 @@ void useSampleBoard();
 void loadFile();
 void editList();
 void addItem(List *currentListPtr);
-bool search(struct List* headOfList, char* searchName);
+bool checkIfListExist(struct List* headOfList, char* searchName);
 
 //Main Function
 int main(void){
@@ -137,7 +137,7 @@ void mainMenu(){
 
 //Allows user to use a sample board
 void useSampleBoard(){
-    List *list1 = malloc(sizeof(List));
+    /*List *list1 = malloc(sizeof(List));
     strcpy(list1->listName, "Abey:");
     list1->nextList=NULL;
 
@@ -188,7 +188,7 @@ void useSampleBoard(){
     list3->prevList = list4;
     list4->prevList = NULL;
 
-    displayBoard(list4);
+    displayBoard(list4);*/
 
 
     //Printing Board (Within Function)
@@ -207,6 +207,58 @@ void useSampleBoard(){
 
         currentList = currentList->nextList;
     }*/
+
+
+    headOfList = NULL;
+
+    char data[MAX_NUMBER_OF_LISTS][MAX_NUMBER_OF_ITEMS][MAX_LENGTH]= { {"Abey", "Oculus Pro", "Oculus Quest 1"}, {"Dante", "Oculus Quest 1", "3070 RTX"}, {"Tim", "Oculus Quest 2"}, {"Nick", "3070 RTX"}};
+    int r = 4;
+
+    int i=r-1;
+    while(i>=0){
+        //Creating a New List Pointer. //Allocating New Memory to New List Pointer
+        List *newListPtr = malloc(sizeof(List));;
+        //Giving New List Pointer the List Name
+        strcpy(newListPtr->listName, data[i][0]);
+        //Creating the Link between New List Pointer and Head of List Pointer
+        newListPtr->nextList = headOfList;
+        //Pointing Head of List Pointer to the New List Pointer
+        headOfList = newListPtr;
+
+        //Testing whether List Names are printed correctly
+        //printf("%s:\n", newListPtr->listName);
+
+        /*Checking where newListPtr points to
+        printf("%s:\n", newListPtr->listName);
+        (newListPtr still points to the same thing headOfList points to)
+        */
+
+        //Head Of Item List
+        newListPtr->firstItem=NULL;
+
+        int j=MAX_NUMBER_OF_ITEMS-1;
+        while(j>=1){
+            if(strlen(data[i][j])>0){
+                //Creating a New Item List Pointer. //Allocating New Memory to New Item List Pointer
+                Item *newItemPtr= malloc(sizeof(Item));
+                //Giving New Item Pointer the Item Name
+                strcpy(newItemPtr->itemName, data[i][j]);
+                //Creating the Link between New Item Pointer and Head Of Item List Pointer
+                newItemPtr->nextItem = newListPtr->firstItem;
+                //Pointing Head Of Item List Pointer to the New Item Pointer
+                newListPtr->firstItem = newItemPtr;
+
+                //Testing whether Item Names are printed correctly
+                //printf("\t%s\n", newListPtr->firstItem->itemName);
+            }
+            //decrementing j
+            j--;
+        }
+
+        //decrementing i
+        i--;
+    }
+    displayBoard(headOfList);
 
 }
 
@@ -356,30 +408,22 @@ void loadFile(){
 //Edit List Function
 void editList(){
 
-    //printf("Enter the name of the list to edit:\n");
 
-    //To add: (Find list name and link pointer to that list, if not just give an error message)
     char searchName[MAX_LIST_NAME_LENGTH];
     printf("Enter the name of the list to edit:\n");
-    //scanf("%s", searchName);
-    fgetc(stdin);
+
+
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
     fgets(searchName, MAX_LIST_NAME_LENGTH, stdin);
-
-    //fgets(tasks[i].task_name,MAX_TASK_NAME_LENGTH,stdin);
-
-    // remove the newline character
-    //tasks[i].task_name[strcspn(tasks[i].task_name, "\n")] = '\0';
-
     //Removing New Line Character
     searchName[strcspn(searchName, "\n")] = '\0';
 
-    // struct List* list4 = NULL;  // Initialize list4 to NULL
 
-    bool listFound = search(headOfList, searchName);
-    if (listFound) {
-        printf("Yes\n");
-    } else {
-        printf("No\n");
+    bool listFound = checkIfListExist(headOfList, searchName);
+    if (!listFound) {//List Not Found then go to main menu
+        printf("List Not Found... Going back to Main Menu...\n");
+        mainMenu();
+        //exit(0);
     }
 
     int choice;
@@ -423,6 +467,7 @@ void editList(){
         switch(choice) {
             case 1:
                 printf("Edit Item Name: \n\n");
+                //
                 break;
             case 2:
                 printf("Add new Item: \n");
@@ -462,7 +507,7 @@ void addItem(List *currentListPtr){
 }
 
 
-bool search(struct List* headOfList, char* searchName)
+bool checkIfListExist(struct List* headOfList, char* searchName)
 {
     struct List* current = headOfList; // Start from the head of the list
     while (current != NULL) {
