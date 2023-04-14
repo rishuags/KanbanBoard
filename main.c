@@ -1,144 +1,125 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
-//Function Definitions
-void displayMenu();
-void displayBoard();
-void loadData();
 
-struct listNode {
+#define MAX_LIST_NAME_LENGTH 50
+#define MAX_ITEM_NAME_LENGTH 50
+#define MAX_LENGTH 1000
+#define MAX_NUMBER_OF_LISTS 100
+#define MAX_NUMBER_OF_ITEMS 100
 
-    char user_name[30];
-    struct item*first_item;
+typedef struct Item{
+    char itemName[MAX_ITEM_NAME_LENGTH];
 
-    struct listNode *next;
-    struct listNode *prev;
-};
-typedef struct listNode ListNode;
+    struct Item *nextItem;
+    struct Item *prevItem;
 
-struct item{
-    char item_name[30];
+}Item;
 
-    struct item *next;
-    struct item *prev;
-};
-typedef struct item Item;
+typedef struct List{
+    char listName[MAX_LIST_NAME_LENGTH];
 
-int main() {
-    displayMenu();
-    printf("test");
+    struct Item *firstItem;
+
+    struct List *nextList;
+    struct List *prevList;
+
+}List;
+
+bool search(struct List* headOfList, char* searchName);
+
+int main()
+{
+List *list1 = malloc(sizeof(List));
+strcpy(list1->listName, "Abey:");
+list1->nextList=NULL;
+list1->prevList = NULL;
+list1->firstItem = NULL;
+
+Item *item1_1 = malloc(sizeof(Item));
+strcpy(item1_1->itemName,"Oculus Pro");
+Item *item1_2 = malloc(sizeof(Item));
+strcpy(item1_2->itemName, "Oculus Quest 1");
+
+item1_1->nextItem=item1_2; // Set nextItem of item1_1 to item1_2
+item1_2->nextItem=NULL; // Set nextItem of item1_2 to NULL
+
+list1->firstItem=item1_1;
+
+
+List *list2 = malloc(sizeof(List));
+strcpy(list2->listName, "Dante:");
+list2->nextList=list1;
+list2->prevList = NULL;
+list2->firstItem = NULL;
+
+Item *item2_1 = malloc(sizeof(Item));
+strcpy(item2_1->itemName, "Oculus Quest 1");
+Item *item2_2  = malloc(sizeof(Item));
+strcpy(item2_2->itemName, "3070 RTX");
+
+item2_1->nextItem=item2_2; // Set nextItem of item2_1 to item2_2
+item2_2->nextItem = NULL; // Set nextItem of item2_2 to NULL
+
+list2->firstItem=item2_1;
+
+
+List *list3 = malloc(sizeof(List));
+strcpy(list3->listName, "Tim:");
+list3->nextList=list2;
+list3->prevList = NULL;
+list3->firstItem = NULL; // Set firstItem to NULL initially
+
+
+Item *item3_1 = malloc(sizeof(Item));
+strcpy(item3_1->itemName, "Oculus Quest 2");
+
+item3_1->nextItem=NULL; // Set nextItem of item3_1 to NULL
+
+list3->firstItem=item3_1;
+
+
+List *list4 = malloc(sizeof(List));
+strcpy(list4->listName, "Nick:");
+list4->nextList=list3;
+list4->prevList = NULL;
+list4->firstItem = NULL; // Set firstItem to NULL initially
+
+Item *item4_1 = malloc(sizeof(Item));
+strcpy(item4_1->itemName, "3070 RTX");
+
+item4_1->nextItem=NULL; // Set nextItem of item4_1 to NULL
+
+list4->firstItem=item4_1;
+
+char searchName[30];
+    printf("Enter the name of the list to edit:\n");
+    scanf("%s", searchName);
+   // struct List* list4 = NULL;  // Initialize list4 to NULL
+
+    bool listFound = search(list4, searchName);
+if (listFound) {
+    printf("Yes\n");
+} else {
+    printf("No\n");
+}
     return 0;
 }
 
-
-/*void loadData(){
-    ListNode* list1 = malloc(sizeof(ListNode));
-    strcpy(list1->item_name, "Abey:");
-    list1->next = NULL;
-}*/
-void displayMenu(){
-
-    int choice;
-    printf("Menu:\n ");
-    printf("1. Display board:\n ");
-    printf("2. Load board from a file:\n ");
-    printf("3. Edit list: \n ");
-    printf("4. Edit Board: \n ");
-    printf("5. Save board to a file: \n ");
-    printf("6. Quit: \n ");
-
-
-
-    int flag=0;
-    do{
-        if(flag==0){
-            printf("Enter your choice(1-5): ");
-            scanf("%d", &choice);
-        }
-        else{
-            printf("Invalid Input. Please try again: \n");
-            printf("Enter your choice(1-5): ");
-            scanf("%d", &choice);
-        }
-        flag++;
+bool search(struct List* headOfList, char* searchName)
+{
+    struct List* current = headOfList; // Start from the head of the list
+    while (current != NULL) {
+        if (strcmp(current->listName, searchName) == 0)
+            return true;
+        current = current->nextList;
     }
-    while(choice>6||choice<1);
-
-    if(choice == 1){
-        displayBoard();
-    }
-
-
+    return false;
 }
 
-void displayBoard(){
 
-    ListNode *name1 = malloc(sizeof(ListNode));
-    strcpy(name1-> user_name, "Abey");
-    name1->next = NULL;
-
-    Item*item1_1 = malloc(sizeof(Item));
-    strcpy(item1_1->item_name,"Oculus Pro");
-    Item*item1_2 = malloc(sizeof(Item));
-    strcpy(item1_2->item_name,"Oculus Quest 1");
-
-    item1_2->next = NULL;
-    name1->first_item = item1_1;
-    item1_1->next = item1_2;
-
-    ListNode *name2 = malloc(sizeof(ListNode));
-    strcpy(name2-> user_name, "Dante");
-    name2->next = name1;
-
-    Item*item2_1 = malloc(sizeof(Item));
-    strcpy(item2_1->item_name,"Oculus Quest 1");
-    Item*item2_2 = malloc(sizeof(Item));
-    strcpy(item2_2->item_name,"3070 RTX");
-
-    item2_2->next = NULL;
-    name2->first_item = item2_1;
-    item2_1->next = item2_2;
-
-     ListNode *name3 = malloc(sizeof(ListNode));
-    strcpy(name3->user_name,"Tim");
-    name3->next = name2;
-
-    Item*item3_1 =malloc(sizeof(Item));
-    strcpy(item3_1->item_name,"Oculus Quest 2");
-    name3 ->first_item = item3_1;
-    item3_1->next = NULL;
-
-    ListNode*name4 = malloc(sizeof(ListNode));
-    strcpy(name4->user_name, "Nick");
-    name4->next = name3;
-
-    Item* item4_1 = malloc(sizeof(Item));
-    strcpy(item4_1->item_name, "3070 RTX");
-
-    name4->first_item = item4_1;
-    item4_1->next = NULL;
-
-    name4->first_item = item4_1;
-    name4->next = name3;
-    name1->prev = name2;
-    name2->prev = name3;
-    name3->prev = name4;
-    name4->prev = NULL;
-
-    ListNode* current_node = name4;
-    Item* current_item;
-
-while (current_node != NULL) {
-    printf("\n");
-    printf("%s:\n", current_node->user_name);
-
-    current_item = current_node->first_item;
-    while (current_item != NULL) {
-        printf("    %s\n", current_item->item_name);
-        current_item = current_item->next;
-    }
 
     current_node = current_node->next;
 }
