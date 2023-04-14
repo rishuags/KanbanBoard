@@ -54,6 +54,8 @@ void loadFile();
 void editList();
 void addItem(List *currentListPtr);
 bool checkIfListExist(struct List* headOfList, char* searchName);
+List* findList(List *headOfList, char *searchName);
+void editItemName(List *currentListPtr);
 
 //Main Function
 int main(void){
@@ -426,6 +428,11 @@ void editList(){
         //exit(0);
     }
 
+    //Finding list - Works :)
+    List *currentListPtr = NULL;
+    currentListPtr = findList(headOfList, searchName);
+    //printf("\nList found: %s\n", currentListPtr->listName); (Used for Testing Purposes to check if the right list was found)
+
     int choice;
     //Running Edit List while user does not request to go back to main menu (entering 4)
     do{
@@ -466,8 +473,8 @@ void editList(){
         //Choosing Function to run depending on choice entered by user
         switch(choice) {
             case 1:
-                printf("Edit Item Name: \n\n");
-                //
+                //printf("Edit Item Name: \n\n");
+                editItemName(currentListPtr);
                 break;
             case 2:
                 printf("Add new Item: \n");
@@ -518,10 +525,33 @@ bool checkIfListExist(struct List* headOfList, char* searchName)
     return false;
 }
 
+//Function to search List for list name and return the pointer if found
+List* findList(List* headOfList, char *searchName){
+    List* current = headOfList;
+    while(current!=NULL){
+        if (strcmp(current->listName, searchName) == 0){
+            return current;
+        }
+        current = current->nextList;
+    }
+}
 
 
+void editItemName(List *currentListPtr) {
+    printf("\nItem name to be changed: %s\n",currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
 
+    char newName[MAX_ITEM_NAME_LENGTH];
 
+    printf("Enter the name of the new item\n");
 
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+    fgets(newName, MAX_LIST_NAME_LENGTH, stdin);
+    //Removing New Line Character
+    newName[strcspn(newName, "\n")] = '\0';
+
+    //Changing the name
+    strcpy(currentListPtr->listName, newName);
+
+}
 
 
