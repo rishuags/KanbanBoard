@@ -38,6 +38,9 @@ typedef struct Board{
 }Board;
 
 
+//Making Default Board Global
+
+
 //Making List Global
 List *headOfList;
 
@@ -49,11 +52,17 @@ void displayBoard();
 void useSampleBoard();
 void loadFile();
 void editList();
+void editBoard();
 bool checkIfListExist(char* searchName);
 List* findList(char *searchName);
 void editItemName(List *currentListPtr);
 void insertItem(char *newItemName, List *currentListPtr);
 void deleteItem(char* nameOfItemToDelete, List *currentListPtr);
+
+void editListName(List* currentListPtr);
+void insertList(char *newBoardName, List* currentListPtr);
+void deleteList(char* nameOfBoardToDelete, List *currentListPtr);
+
 
 
 //Main Function
@@ -74,11 +83,11 @@ void mainMenu(){
     do{
         //Printing Menu
         printf("\nMenu:\n ");
-        printf("1. Display Board:\n ");
-        printf("2. Load Board From A File:\n ");
-        printf("3. Edit List: \n ");
+        printf("1. Display board:\n ");
+        printf("2. Load board from a file:\n ");
+        printf("3. Edit list: \n ");
         printf("4. Edit Board: \n ");
-        printf("5. Save Board To A File: \n ");
+        printf("5. Save board to a file: \n ");
         printf("6. Quit: \n");
 
         printf("Enter your choice(1-6):\n");
@@ -121,7 +130,8 @@ void mainMenu(){
                 editList();
                 break;
             case 4:
-                printf("Edit Board: \n");
+                //printf("Edit Board: \n");
+                editBoard();
                 break;
             case 5:
                 printf("Save Board to a file: \n");
@@ -141,6 +151,78 @@ void mainMenu(){
 
 //Allows user to use a sample board
 void useSampleBoard(){
+    /*List *list1 = malloc(sizeof(List));
+    strcpy(list1->listName, "Abey:");
+    list1->nextList=NULL;
+
+    Item *item1_1 = malloc(sizeof(Item));
+    strcpy(item1_1->itemName,"Oculus Pro");
+    Item *item1_2 = malloc(sizeof(Item));
+    strcpy(item1_2->itemName, "Oculus Quest 1");
+
+    item1_2->nextItem=NULL;
+    list1->firstItem=item1_1;
+    item1_1->nextItem=item1_2;
+
+
+    List *list2 = malloc(sizeof(List));
+    strcpy(list2->listName, "Dante:");
+    list2->nextList=list1;
+
+    Item *item2_1 = malloc(sizeof(Item));
+    strcpy(item2_1->itemName, "Oculus Quest 1");
+    item2_1->nextItem = NULL;
+    Item *item2_2  = malloc(sizeof(Item));
+    strcpy(item2_2->itemName, "3070 RTX");
+    item2_2->nextItem =NULL;
+
+    list2->firstItem=item2_1;
+    item2_1->nextItem=item2_2;
+
+    List *list3 = malloc(sizeof(List));
+    strcpy(list3->listName, "Tim:");
+    list3->nextList=list2;
+
+    Item *item3_1 = malloc(sizeof(Item));
+    strcpy(item3_1->itemName, "Oculus Quest 2");
+    list3->firstItem=item3_1;
+    item3_1->nextItem=NULL;
+
+
+    List *list4 = malloc(sizeof(List));
+    strcpy(list4->listName, "Nick:");
+    Item *item4_1 = malloc(sizeof(Item));
+    strcpy(item4_1->itemName, "3070 RTX");
+    item4_1->nextItem=NULL;
+
+    list4->firstItem=item4_1;
+    list4->nextList=list3;
+    list1->prevList = list2;
+    list2->prevList = list3;
+    list3->prevList = list4;
+    list4->prevList = NULL;
+
+    displayBoard(list4);*/
+
+
+    //Printing Board (Within Function)
+    //List *currentList;
+    //Item *currentItem;
+    //currentList=list4;
+    /*while (currentList != NULL) {
+        printf("\n");
+        printf("%s:\n", currentList->listName);
+
+        currentItem = currentList->firstItem;
+        while (currentItem != NULL) {
+            printf("    %s\n", currentItem->itemName);
+            currentItem = currentItem->nextItem;
+        }
+
+        currentList = currentList->nextList;
+    }*/
+
+
     headOfList = NULL;
 
     char data[MAX_NUMBER_OF_LISTS][MAX_NUMBER_OF_ITEMS][MAX_LENGTH]= { {"Abey", "Oculus Pro", "Oculus Quest 1"}, {"Dante", "Oculus Quest 1", "3070 RTX"}, {"Tim", "Oculus Quest 2"}, {"Nick", "3070 RTX"}};
@@ -197,7 +279,7 @@ void useSampleBoard(){
 //Displays a board
 void displayBoard(){
 
-    printf("*************************************************************\n");
+    printf("/*************************************************************/\n");
     printf("Displaying Board...\n\n");
 
     if(headOfList==NULL){
@@ -226,7 +308,7 @@ void displayBoard(){
 
         currentListPtr=currentListPtr->nextList;
     }
-    printf("*************************************************************\n\n");
+    printf("/*************************************************************/\n\n");
 }
 
 //Loading File
@@ -253,10 +335,8 @@ void loadFile(){
     //Reading the file and storing it a 3D array
     while(fgets(line,MAX_ITEM_NAME_LENGTH*MAX_LIST_NAME_LENGTH,fp) && r < MAX_NUMBER_OF_LISTS){
         token = strtok(line, ",");
-        while (token != NULL && c < MAX_NUMBER_OF_ITEMS){
-            //printf("%s\n", token);
+        while (token != NULL && c < MAX_NUMBER_OF_ITEMS) {
             strcpy(data[r][c], token);
-            data[r][c][strcspn(data[r][c], "\n")] = '\0';
             c++;
             token = strtok(NULL, ",");
         }
@@ -276,21 +356,19 @@ void loadFile(){
         printf("\n");
     }*/
 
-    //Checking where data names are stored in data array(testing)
-    /*printf("\nList Names:\n");
-    printf("%s\n", data[0][0]);
+    //Checking where list names are stored in data array(testing)
+    /*printf("%s\n", data[0][0]);
     printf("%s\n", data[1][0]);
     printf("%s\n", data[2][0]);
     printf("%s\n", data[3][0]);
-    printf("%s\n", data[4][0]);
-    printf("\nItem Names:\n");
-    printf("%s\n", data[0][1]);
-    printf("%s\n", data[0][2]);*/
+    printf("%s\n", data[4][0]);*/
+
 
     /****Loading File into Linked Lists****/
 
     //Creating Head of List Pointer and Initializing it as NULL
     headOfList = NULL;
+
 
     int i=r-1;
     while(i>=0){
@@ -336,8 +414,7 @@ void loadFile(){
         //decrementing i
         i--;
     }
-    printf("File Successfully Loaded... \n");
-    //displayBoard();
+    displayBoard();
 
 }
 
@@ -449,6 +526,111 @@ void editList(){
 }
 
 
+//edit Board Function
+void editBoard()
+{
+    char searchBoardName[MAX_LIST_NAME_LENGTH];
+    printf("Enter the name of the list to edit:\n");
+
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+    fgets(searchBoardName, MAX_LIST_NAME_LENGTH, stdin);
+    //Removing New Line Character
+    searchBoardName[strcspn(searchBoardName, "\n")] = '\0';
+
+    //Checking is list exists
+    bool listFound = checkIfListExist(searchBoardName);
+    if (!listFound) {//List Not Found then go to main menu
+        printf("List Not Found... Going back to Main Menu...\n");
+        mainMenu();
+        //exit(0);
+    }
+
+    //Finding list - Works :)
+    List *currentListPtr = NULL;
+    currentListPtr = findList(searchBoardName);
+    printf("\nList has been found. This is the list name: %s\n", currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
+
+
+    int choice;
+    //Running Edit List while user does not request to go back to main menu (entering 4)
+    do{
+
+        printf("\nOptions: \n");
+        printf("1. Edit the name of a list \n");
+        printf("2. Add a new list \n");
+        printf("3. Delete a list\n");
+        printf("4. Return to Main Menu \n");
+
+        printf("Enter your choice(1-4):\n");
+
+        //Error Handling to invalidate incorrect entries
+        int flag=0; //counts number of times the exit condition for do-while loop not met
+        do{
+            if(flag==0){
+                while(scanf("%d", &choice)==0) //while scanf does not scan an integer
+                {
+                    printf("Invalid Input. Please try again: \n");
+                    int c;
+                    while((c=getchar())!='\n' && c!=EOF); //clear the stdin
+                }
+            }
+            else{
+                printf("Invalid Input. Please try again: \n");
+                while(scanf("%d", &choice)==0) //while scanf does not scan an integer
+                {
+                    printf("Invalid Input. Please try again: \n");
+                    int c;
+                    while((c=getchar())!='\n' && c!=EOF); //clear the stdin
+                }
+            }
+            flag++;
+        }
+        while(choice>4 || choice <1);
+
+        char newBoardName[MAX_ITEM_NAME_LENGTH];
+        char nameOfBoardToBeDeleted[MAX_ITEM_NAME_LENGTH];
+
+        switch(choice) {
+            case 1:
+                //printf("Edit Item Name: \n\n");
+                editListName(currentListPtr);
+                break;
+            case 2:
+                printf("Enter the name of the list to be added: \n");
+
+                fgetc(stdin);
+                fgets(newBoardName, MAX_ITEM_NAME_LENGTH, stdin);
+                //Removing New Line Character
+                newBoardName[strcspn(newBoardName, "\n")] = '\0';
+
+                insertList(newBoardName, currentListPtr);
+                break;
+            case 3:
+                //printf("Delete an Item: \n");
+                printf("Enter name of list to delete:\n");
+                fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+                fgets(nameOfBoardToBeDeleted, MAX_ITEM_NAME_LENGTH, stdin);
+                nameOfBoardToBeDeleted[strcspn(nameOfBoardToBeDeleted, "\n")] = '\0';
+
+                deleteList(nameOfBoardToBeDeleted, currentListPtr);
+
+                break;
+            default:
+                printf("\nReturning to main menu...\n");
+        }
+
+
+    }
+    while(choice!=4);
+
+    //If choice = 4 return to main menu
+    mainMenu();
+
+
+
+}
+
+
 
 
 bool checkIfListExist(char* searchName)
@@ -500,17 +682,13 @@ void editItemName(List *currentListPtr) {
 
     bool found_item = false;
 
-    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing)
-    //Checking if item exists
+    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing: Ignore if not developer)
     while(currentItemPtr!=NULL){
-
         if(strcmp(currentItemPtr->itemName, searchItemName)==0){
-            printf("Old Item Name: %s\n", currentItemPtr->itemName);
             found_item=true;
             strcpy(currentItemPtr->itemName, newItemName);
 
             printf("Changed Item Name: %s\n", currentItemPtr->itemName);
-            printf("Item Name Successfully Changed... You can verify by displaying the board again :) \n");
             break;
         }
         currentItemPtr = currentItemPtr->nextItem;
@@ -529,6 +707,7 @@ void editItemName(List *currentListPtr) {
         printf("Returning to main menu...\n");
         mainMenu();
     }*/
+    displayBoard(headOfList);
 
 }
 
@@ -558,7 +737,7 @@ void insertItem(char *newItemName, List *currentListPtr)
     currentListPtr->firstItem = newItem;
 
     printf("Item: %s, has been successfully added to List: %s, you can print the board again to check :)\n", currentListPtr->firstItem->itemName, currentListPtr->listName);
-
+    displayBoard(headOfList);
 }
 
 void deleteItem(char* nameOfItemToDelete, List *currentListPtr){
@@ -605,5 +784,129 @@ void deleteItem(char* nameOfItemToDelete, List *currentListPtr){
 
     // Free the memory of the item to be deleted
     free(currentItemPtr);
+    displayBoard(headOfList);
 }
+
+void editListName(List* currentListPtr)
+{
+    char searchListName[MAX_ITEM_NAME_LENGTH];
+    char newListName[MAX_LIST_NAME_LENGTH];
+    Item *currentItemPtr = currentListPtr->firstItem;
+
+
+    printf("Enter the name of the list to edit\n");
+
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+    fgets(searchListName, MAX_LIST_NAME_LENGTH, stdin);
+    //Removing New Line Character
+    searchListName[strcspn(searchListName, "\n")] = '\0';
+
+    printf("Enter the new name for list %s\n", currentListPtr->listName);
+
+    //fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets (Not Required here as there is no scanf before it)
+    fgets(newListName, MAX_LIST_NAME_LENGTH, stdin);
+    //Removing New Line Character
+    newListName[strcspn(newListName, "\n")] = '\0';
+
+
+
+    bool found_list = false;
+
+    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing: Ignore if not developer)
+    while(currentListPtr!=NULL){
+        if(strcmp(currentListPtr->listName, searchListName)==0){
+            found_list=true;
+            strcpy(currentListPtr->listName, newListName);
+
+            printf("Changed List Name: %s\n", currentListPtr->listName);
+            break;
+        }
+        currentListPtr = currentListPtr->nextList;
+    }
+    displayBoard(headOfList);
+
+    //If Item Not Found then go to main menu
+    if(!found_list){
+        printf("Item Not Found...Going back to main menu\n");
+        mainMenu();
+    }
+
+
+}
+
+void insertList(char* newBoardName, List* currentListPtr)
+{
+    Item *currentItemPtr = currentListPtr->firstItem;
+    bool doesListExist=false;
+    while(currentItemPtr!=NULL){
+        if(strcmp(currentItemPtr->itemName, newBoardName)==0){
+            doesListExist=true;
+            break;
+        }
+        currentItemPtr=currentItemPtr->nextItem;
+    }
+
+    // If List already exists
+    if(doesListExist){
+        printf("List Already Exists...Going back to Main Menu\n");
+        mainMenu();
+        return;
+    }
+    //Else:
+
+    //Creating a new Name
+    List *newName = malloc(sizeof(List));
+    strcpy(newName->listName, newBoardName); //Giving the New Item its Name
+    newName->firstItem = NULL; // Initializing the first item of the new list to NULL
+    newName->nextList = currentListPtr->nextList; // Linking new list to current list's next list
+    newName->prevList = currentListPtr; // Linking new list to current list as previous list
+    currentListPtr->nextList = newName; // Linking current list to new list as next list
+
+    //printf("Item: %s, has been successfully added to List: %s, you can print the board again to check :)\n", currentListPtr->firstItem->itemName, currentListPtr->listName);
+
+    displayBoard(headOfList);
+}
+
+void deleteList(char* nameOfBoardToDelete, List *currentListPtr)
+{
+
+    Item *currentItemPtr = currentListPtr->firstItem;
+    List* prevList = NULL;
+
+    Item *currentItemPtr2 = currentListPtr->firstItem;
+
+    bool doesListExist=false;
+    while(currentItemPtr2!=NULL){
+        if(strcmp(currentItemPtr2->itemName, nameOfBoardToDelete)==0){
+            doesListExist=true;
+            break;
+        }
+        currentItemPtr2=currentItemPtr2->nextItem;
+    }
+
+    // If List already exists
+    if(doesListExist){
+        printf("List Not Found...Going back to main menu\n");
+        mainMenu();
+        return;
+    }
+    //Else:
+
+    while (currentListPtr != NULL && strcmp(currentListPtr->listName, nameOfBoardToDelete) != 0) {
+        prevList = currentListPtr;
+        currentListPtr = currentListPtr->nextList;
+    }
+
+    if (prevList == NULL) {
+        // Item to be deleted is the first item in the list
+        headOfList = currentListPtr->nextList;
+    } else {
+        prevList->nextList = currentListPtr->nextList;
+    }
+
+
+    free(currentListPtr);
+    displayBoard(headOfList);
+}
+    
 
