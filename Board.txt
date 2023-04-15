@@ -1,5 +1,5 @@
-Nick, 3070 RTX, Oculus
-Malone AB, 3060 RTX, Ryzen 5, PS4
-Kevin, PS3, Switch, 2060 RTX
-Micheal, Xbox 360, Nintendo DS, MacBook
-Dwight, iPad Pro, MacBook Air, PS4, 3060 RTX
+Nick,3070 RTX,Oculus
+Malone AB,3060 RTX,Ryzen 5,PS4
+Kevin,PS3,Switch,2060 RTX
+Micheal,Xbox 360,Nintendo DS,MacBook
+Dwight,iPad Pro,MacBook Air,PS4,3060 RTX
