@@ -38,9 +38,6 @@ typedef struct Board{
 }Board;
 
 
-//Making Default Board Global
-
-
 //Making List Global
 List *headOfList;
 
@@ -77,11 +74,11 @@ void mainMenu(){
     do{
         //Printing Menu
         printf("\nMenu:\n ");
-        printf("1. Display board:\n ");
-        printf("2. Load board from a file:\n ");
-        printf("3. Edit list: \n ");
+        printf("1. Display Board:\n ");
+        printf("2. Load Board From A File:\n ");
+        printf("3. Edit List: \n ");
         printf("4. Edit Board: \n ");
-        printf("5. Save board to a file: \n ");
+        printf("5. Save Board To A File: \n ");
         printf("6. Quit: \n");
 
         printf("Enter your choice(1-6):\n");
@@ -144,78 +141,6 @@ void mainMenu(){
 
 //Allows user to use a sample board
 void useSampleBoard(){
-    /*List *list1 = malloc(sizeof(List));
-    strcpy(list1->listName, "Abey:");
-    list1->nextList=NULL;
-
-    Item *item1_1 = malloc(sizeof(Item));
-    strcpy(item1_1->itemName,"Oculus Pro");
-    Item *item1_2 = malloc(sizeof(Item));
-    strcpy(item1_2->itemName, "Oculus Quest 1");
-
-    item1_2->nextItem=NULL;
-    list1->firstItem=item1_1;
-    item1_1->nextItem=item1_2;
-
-
-    List *list2 = malloc(sizeof(List));
-    strcpy(list2->listName, "Dante:");
-    list2->nextList=list1;
-
-    Item *item2_1 = malloc(sizeof(Item));
-    strcpy(item2_1->itemName, "Oculus Quest 1");
-    item2_1->nextItem = NULL;
-    Item *item2_2  = malloc(sizeof(Item));
-    strcpy(item2_2->itemName, "3070 RTX");
-    item2_2->nextItem =NULL;
-
-    list2->firstItem=item2_1;
-    item2_1->nextItem=item2_2;
-
-    List *list3 = malloc(sizeof(List));
-    strcpy(list3->listName, "Tim:");
-    list3->nextList=list2;
-
-    Item *item3_1 = malloc(sizeof(Item));
-    strcpy(item3_1->itemName, "Oculus Quest 2");
-    list3->firstItem=item3_1;
-    item3_1->nextItem=NULL;
-
-
-    List *list4 = malloc(sizeof(List));
-    strcpy(list4->listName, "Nick:");
-    Item *item4_1 = malloc(sizeof(Item));
-    strcpy(item4_1->itemName, "3070 RTX");
-    item4_1->nextItem=NULL;
-
-    list4->firstItem=item4_1;
-    list4->nextList=list3;
-    list1->prevList = list2;
-    list2->prevList = list3;
-    list3->prevList = list4;
-    list4->prevList = NULL;
-
-    displayBoard(list4);*/
-
-
-    //Printing Board (Within Function)
-    //List *currentList;
-    //Item *currentItem;
-    //currentList=list4;
-    /*while (currentList != NULL) {
-        printf("\n");
-        printf("%s:\n", currentList->listName);
-
-        currentItem = currentList->firstItem;
-        while (currentItem != NULL) {
-            printf("    %s\n", currentItem->itemName);
-            currentItem = currentItem->nextItem;
-        }
-
-        currentList = currentList->nextList;
-    }*/
-
-
     headOfList = NULL;
 
     char data[MAX_NUMBER_OF_LISTS][MAX_NUMBER_OF_ITEMS][MAX_LENGTH]= { {"Abey", "Oculus Pro", "Oculus Quest 1"}, {"Dante", "Oculus Quest 1", "3070 RTX"}, {"Tim", "Oculus Quest 2"}, {"Nick", "3070 RTX"}};
@@ -272,7 +197,7 @@ void useSampleBoard(){
 //Displays a board
 void displayBoard(){
 
-    printf("/*************************************************************/\n");
+    printf("*************************************************************\n");
     printf("Displaying Board...\n\n");
 
     if(headOfList==NULL){
@@ -301,7 +226,7 @@ void displayBoard(){
 
         currentListPtr=currentListPtr->nextList;
     }
-    printf("/*************************************************************/\n\n");
+    printf("*************************************************************\n\n");
 }
 
 //Loading File
@@ -328,8 +253,10 @@ void loadFile(){
     //Reading the file and storing it a 3D array
     while(fgets(line,MAX_ITEM_NAME_LENGTH*MAX_LIST_NAME_LENGTH,fp) && r < MAX_NUMBER_OF_LISTS){
         token = strtok(line, ",");
-        while (token != NULL && c < MAX_NUMBER_OF_ITEMS) {
+        while (token != NULL && c < MAX_NUMBER_OF_ITEMS){
+            //printf("%s\n", token);
             strcpy(data[r][c], token);
+            data[r][c][strcspn(data[r][c], "\n")] = '\0';
             c++;
             token = strtok(NULL, ",");
         }
@@ -349,19 +276,21 @@ void loadFile(){
         printf("\n");
     }*/
 
-    //Checking where list names are stored in data array(testing)
-    /*printf("%s\n", data[0][0]);
+    //Checking where data names are stored in data array(testing)
+    /*printf("\nList Names:\n");
+    printf("%s\n", data[0][0]);
     printf("%s\n", data[1][0]);
     printf("%s\n", data[2][0]);
     printf("%s\n", data[3][0]);
-    printf("%s\n", data[4][0]);*/
-
+    printf("%s\n", data[4][0]);
+    printf("\nItem Names:\n");
+    printf("%s\n", data[0][1]);
+    printf("%s\n", data[0][2]);*/
 
     /****Loading File into Linked Lists****/
 
     //Creating Head of List Pointer and Initializing it as NULL
     headOfList = NULL;
-
 
     int i=r-1;
     while(i>=0){
@@ -407,7 +336,8 @@ void loadFile(){
         //decrementing i
         i--;
     }
-    displayBoard();
+    printf("File Successfully Loaded... \n");
+    //displayBoard();
 
 }
 
@@ -570,13 +500,17 @@ void editItemName(List *currentListPtr) {
 
     bool found_item = false;
 
-    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing: Ignore if not developer)
+    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing)
+    //Checking if item exists
     while(currentItemPtr!=NULL){
+
         if(strcmp(currentItemPtr->itemName, searchItemName)==0){
+            printf("Old Item Name: %s\n", currentItemPtr->itemName);
             found_item=true;
             strcpy(currentItemPtr->itemName, newItemName);
 
             printf("Changed Item Name: %s\n", currentItemPtr->itemName);
+            printf("Item Name Successfully Changed... You can verify by displaying the board again :) \n");
             break;
         }
         currentItemPtr = currentItemPtr->nextItem;
