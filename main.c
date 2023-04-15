@@ -12,6 +12,7 @@
 
 
 char searchName[MAX_LIST_NAME_LENGTH];
+char itemToDelete[MAX_ITEM_NAME_LENGTH];
 
 
 typedef struct Item{
@@ -479,6 +480,7 @@ void editList(){
                 printf("Edit Item Name: \n\n");
                 //
                 //printf("Edit Item Name: \n\n");
+
                 editItemName(currentListPtr);
                 break;
             case 2:
@@ -494,8 +496,8 @@ void editList(){
                 insertItem(headOfList,searchName, newItem);
                 break;
             case 3:
-                printf("Delete an Item: \n");
-                char itemToDelete[MAX_ITEM_NAME_LENGTH];
+                //printf("Delete an Item: \n");
+
 
                 printf("Enter name of item to delete:\n");
                 fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
@@ -563,22 +565,62 @@ List* findList(List* headOfList, char *searchName){
 
 
 void editItemName(List *currentListPtr) {
-    printf("\nItem name to be changed: %s\n",currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
+    //printf("\nItem name to be changed: %s\n",currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
 
-    char newName[MAX_ITEM_NAME_LENGTH];
+    char searchItemName[MAX_ITEM_NAME_LENGTH];
+    char newItemName[MAX_ITEM_NAME_LENGTH];
+    Item *currentItemPtr = currentListPtr->firstItem;
+
+
+    printf("Enter the name of the item to edit\n");
+
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+    fgets(searchItemName, MAX_LIST_NAME_LENGTH, stdin);
+    //Removing New Line Character
+    searchItemName[strcspn(searchItemName, "\n")] = '\0';
 
     printf("Enter the name of the new item\n");
 
-    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
-    fgets(newName, MAX_LIST_NAME_LENGTH, stdin);
+    //fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets (Not Required here as there is no scanf before it)
+    fgets(newItemName, MAX_LIST_NAME_LENGTH, stdin);
     //Removing New Line Character
-    newName[strcspn(newName, "\n")] = '\0';
+    newItemName[strcspn(newItemName, "\n")] = '\0';
 
-    //Changing the name
-    strcpy(currentListPtr->listName, newName);
-    displayBoard(headOfList);
+
+
+    bool found_item = false;
+
+    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing: Ignore if not developer)
+    while(currentItemPtr!=NULL){
+        if(strcmp(currentItemPtr->itemName, searchItemName)==0){
+            found_item=true;
+            strcpy(currentItemPtr->itemName, newItemName);
+
+            /****PRINTS CORRECTLY OVER HERE BUT DOESN"T WORK WHEN DISPLAYING BOARD AGAIN******/
+
+            printf("Changed Item Name: %s\n", currentItemPtr->itemName);
+            displayBoard(headOfList);
+            break;
+        }
+        currentItemPtr = currentItemPtr->nextItem;
+    }
+
+    //If Item Not Found then go to main menu
+    if(!found_item){
+        printf("Item Not Found...Going back to main menu\n");
+        mainMenu();
+    }
+    /*
+    //Checking if the first Item of a list has followed through (Testing)
+    //printf("Current List: first Item: %s\n", currentListPtr->firstItem->itemName);
+    if(currentListPtr->firstItem->itemName==NULL){
+        printf("List is Empty\n");
+        printf("Returning to main menu...\n");
+        mainMenu();
+    }*/
 
 }
+
 
 
 void insertItem(List *headOfList, char *listName, char *itemName)
@@ -614,6 +656,7 @@ void deleteItem(List* headOfList,char *listName, char *deleteName)
         currentItem = currentItem->nextItem;
     }
 
+
     // Update the nextItem pointer of the previous item
     if (prevItem == NULL) {
         // Item to be deleted is the first item in the list
@@ -628,7 +671,3 @@ void deleteItem(List* headOfList,char *listName, char *deleteName)
 
     displayBoard(headOfList);
 }
-
-
-
-
