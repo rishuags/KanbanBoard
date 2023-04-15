@@ -576,8 +576,6 @@ void editItemName(List *currentListPtr) {
             found_item=true;
             strcpy(currentItemPtr->itemName, newItemName);
 
-            /****PRINTS CORRECTLY OVER HERE BUT DOESN"T WORK WHEN DISPLAYING BOARD AGAIN******/
-
             printf("Changed Item Name: %s\n", currentItemPtr->itemName);
             break;
         }
@@ -602,6 +600,22 @@ void editItemName(List *currentListPtr) {
 
 void insertItem(char *newItemName, List *currentListPtr)
 {
+    //Error handling to check whether item exists already
+    Item *currentItemPtr = currentListPtr->firstItem;
+    bool doesItemExist=false;
+    while(currentItemPtr!=NULL){
+        if(strcmp(currentItemPtr->itemName, newItemName)==0){
+            doesItemExist=true;
+            break;
+        }
+        currentItemPtr=currentItemPtr->nextItem;
+    }
+    //If Item does not Exist
+    if(doesItemExist){
+        printf("Item Already Exists...Going back to Main Menu\n");
+        mainMenu();
+    }
+    //Else:
 
     //Creating a new Item
     Item *newItem = malloc(sizeof(Item));
@@ -609,46 +623,35 @@ void insertItem(char *newItemName, List *currentListPtr)
     newItem->nextItem = currentListPtr->firstItem; //Linking new Item to current Lists first Item
     currentListPtr->firstItem = newItem;
 
-    /*List *targetList = NULL;
-    targetList = findList(headOfList, searchName); //How is searchName being identified over here
+    printf("Item: %s, has been successfully added to List: %s, you can print the board again to check :)\n", currentListPtr->firstItem->itemName, currentListPtr->listName);
 
-    // Create a new item
-    Item *newItem = malloc(sizeof(Item));
-    strcpy(newItem->itemName, itemName);
-    newItem->nextItem = targetList->firstItem;
-    newItem->prevItem = NULL;
-    newItem->prevList = targetList;
-
-    // Update the firstItem pointer of the target list
-    targetList->firstItem = newItem;
-
-    displayBoard(headOfList);*/
 }
 
 void deleteItem(char* nameOfItemToDelete, List *currentListPtr){
 
     Item *currentItemPtr = currentListPtr->firstItem;
-    /*currentItemPtr->prevItem=NULL;
-
-    //Finding Item to be deleted
-
-    while(currentItemPtr!=NULL && strcmp(currentItemPtr->itemName, nameOfItemToDelete)!=0){
-        currentItemPtr->prevItem = currentItemPtr;
-        currentItemPtr = currentItemPtr->nextItem;
-    }
-
-    if(currentItemPtr->prevItem==NULL){
-        currentListPtr->firstItem = currentItemPtr->nextItem;
-    }
-    else{
-        currentItemPtr->prevItem = currentItemPtr->nextItem;
-    }
-    free(currentItemPtr);*/
 
     Item* prevItem = NULL;
 
-    // Find the item to be deleted
+    //Adding error handling block to make sure item exists
+    Item *currentItemPtr2 = currentListPtr->firstItem;
+    bool doesItemExist=false;
+    while(currentItemPtr2!=NULL){
+        if(strcmp(currentItemPtr2->itemName, nameOfItemToDelete)==0){
+            doesItemExist=true;
+            break;
+        }
+        currentItemPtr2=currentItemPtr2->nextItem;
+    }
+    //If Item does not Exist
+    if(!doesItemExist){
+        printf("Item Not Found...Going back to main menu\n");
+        mainMenu();
+    }
+    //Else:
 
+
+    // Find the item to be deleted (If Item doesn't exist this will run in an infinite loop, causing program to fail)
     while (currentItemPtr != NULL && strcmp(currentItemPtr->itemName, nameOfItemToDelete) != 0) {
         prevItem = currentItemPtr;
         currentItemPtr = currentItemPtr->nextItem;
@@ -663,6 +666,10 @@ void deleteItem(char* nameOfItemToDelete, List *currentListPtr){
         prevItem->nextItem = currentItemPtr->nextItem;
     }
 
+    printf("Item: %s has been successfully deleted from List: %s, you can display the board again to check :)\n", currentItemPtr->itemName, currentListPtr->listName);
+
+
     // Free the memory of the item to be deleted
     free(currentItemPtr);
 }
+
