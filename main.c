@@ -11,8 +11,7 @@
 #define MAX_NUMBER_OF_ITEMS 100
 
 
-
-
+char searchName[MAX_LIST_NAME_LENGTH];
 
 
 typedef struct Item{
@@ -20,6 +19,7 @@ typedef struct Item{
 
     struct Item *nextItem;
     struct Item *prevItem;
+    struct List *prevList;
 
 }Item;
 
@@ -55,8 +55,10 @@ void editList();
 void addItem(List *currentListPtr);
 bool checkIfListExist(struct List* headOfList, char* searchName);
 List* findList(List *headOfList, char *searchName);
-void editItemName(List *currentListPtr);
 
+void editItemName(List *currentListPtr);
+void insertItem(List *headOfList, char *listName, char *itemName);
+void deleteItem(List* headOfList,char *listName, char *deleteName);
 //Main Function
 int main(void){
 
@@ -411,17 +413,18 @@ void loadFile(){
 void editList(){
 
 
-    char searchListName[MAX_LIST_NAME_LENGTH];
+    //char searchName[MAX_LIST_NAME_LENGTH];
+    char newItem[MAX_ITEM_NAME_LENGTH];
     printf("Enter the name of the list to edit:\n");
 
 
     fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
-    fgets(searchListName, MAX_LIST_NAME_LENGTH, stdin);
+    fgets(searchName, MAX_LIST_NAME_LENGTH, stdin);
     //Removing New Line Character
-    searchListName[strcspn(searchListName, "\n")] = '\0';
+    searchName[strcspn(searchName, "\n")] = '\0';
 
-    //Checking is list exists
-    bool listFound = checkIfListExist(headOfList, searchListName);
+
+    bool listFound = checkIfListExist(headOfList, searchName);
     if (!listFound) {//List Not Found then go to main menu
         printf("List Not Found... Going back to Main Menu...\n");
         mainMenu();
@@ -430,8 +433,8 @@ void editList(){
 
     //Finding list - Works :)
     List *currentListPtr = NULL;
-    currentListPtr = findList(headOfList, searchListName);
-    printf("\nList has been found. This is the list name: %s\n", currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
+    currentListPtr = findList(headOfList, searchName);
+    //printf("\nList found: %s\n", currentListPtr->listName); (Used for Testing Purposes to check if the right list was found)
 
     int choice;
     //Running Edit List while user does not request to go back to main menu (entering 4)
@@ -473,14 +476,34 @@ void editList(){
         //Choosing Function to run depending on choice entered by user
         switch(choice) {
             case 1:
+                printf("Edit Item Name: \n\n");
+                //
                 //printf("Edit Item Name: \n\n");
                 editItemName(currentListPtr);
                 break;
             case 2:
-                printf("Add new Item: \n");
+                //printf("Add new Item: \n");
+
+
+                printf("Enter new name of Item:\n");
+                fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+                fgets(newItem, MAX_ITEM_NAME_LENGTH, stdin);
+                //Removing New Line Character
+                newItem[strcspn(newItem, "\n")] = '\0';
+
+                insertItem(headOfList,searchName, newItem);
                 break;
             case 3:
                 printf("Delete an Item: \n");
+                char itemToDelete[MAX_ITEM_NAME_LENGTH];
+
+                printf("Enter name of item to delete:\n");
+                fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+                fgets(itemToDelete, MAX_ITEM_NAME_LENGTH, stdin);
+                //Removing New Line Character
+                itemToDelete[strcspn(itemToDelete, "\n")] = '\0';
+
+                deleteItem(headOfList,searchName, itemToDelete);
                 break;
             default:
                 printf("\nReturning to main menu...\n");
@@ -532,66 +555,80 @@ List* findList(List* headOfList, char *searchName){
         if (strcmp(current->listName, searchName) == 0){
             return current;
         }
+        //prevItem = current;
         current = current->nextList;
+
     }
 }
 
 
 void editItemName(List *currentListPtr) {
-    //printf("\nItem name to be changed: %s\n",currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
+    printf("\nItem name to be changed: %s\n",currentListPtr->listName); //(Used for Testing Purposes to check if the right list was found)
 
-    char searchItemName[MAX_ITEM_NAME_LENGTH];
-    char newItemName[MAX_ITEM_NAME_LENGTH];
-    Item *currentItemPtr = currentListPtr->firstItem;
-
-
-    printf("Enter the name of the item to edit\n");
-
-    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
-    fgets(searchItemName, MAX_LIST_NAME_LENGTH, stdin);
-    //Removing New Line Character
-    searchItemName[strcspn(searchItemName, "\n")] = '\0';
+    char newName[MAX_ITEM_NAME_LENGTH];
 
     printf("Enter the name of the new item\n");
 
-    //fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets (Not Required here as there is no scanf before it)
-    fgets(newItemName, MAX_LIST_NAME_LENGTH, stdin);
+    fgetc(stdin);//adding this statement to make sure that the new line created by scanf doesn't affect fgets
+    fgets(newName, MAX_LIST_NAME_LENGTH, stdin);
     //Removing New Line Character
-    newItemName[strcspn(newItemName, "\n")] = '\0';
+    newName[strcspn(newName, "\n")] = '\0';
 
-
-
-    bool found_item = false;
-
-    //printf("First item of %s is %s\n", currentListPtr->listName, currentItemPtr->itemName); (Testing: Ignore if not developer)
-    while(currentItemPtr!=NULL){
-        if(strcmp(currentItemPtr->itemName, searchItemName)==0){
-            found_item=true;
-            strcpy(currentItemPtr->itemName, newItemName);
-
-            /****PRINTS CORRECTLY OVER HERE BUT DOESN"T WORK WHEN DISPLAYING BOARD AGAIN******/
-
-            printf("Changed Item Name: %s\n", currentItemPtr->itemName);
-            break;
-        }
-        currentItemPtr = currentItemPtr->nextItem;
-    }
-
-    //If Item Not Found then go to main menu
-    if(!found_item){
-        printf("Item Not Found...Going back to main menu\n");
-        mainMenu();
-    }
-    /*
-    //Checking if the first Item of a list has followed through (Testing)
-    //printf("Current List: first Item: %s\n", currentListPtr->firstItem->itemName);
-    if(currentListPtr->firstItem->itemName==NULL){
-        printf("List is Empty\n");
-        printf("Returning to main menu...\n");
-        mainMenu();
-    }*/
+    //Changing the name
+    strcpy(currentListPtr->listName, newName);
+    displayBoard(headOfList);
 
 }
+
+
+void insertItem(List *headOfList, char *listName, char *itemName)
+{
+
+    List *targetList = NULL;
+    targetList = findList(headOfList, searchName);
+
+    // Create a new item
+    Item *newItem = malloc(sizeof(Item));
+    strcpy(newItem->itemName, itemName);
+    newItem->nextItem = targetList->firstItem;
+    newItem->prevItem = NULL;
+    newItem->prevList = targetList;
+
+    // Update the firstItem pointer of the target list
+    targetList->firstItem = newItem;
+
+    displayBoard(headOfList);
+}
+
+void deleteItem(List* headOfList,char *listName, char *deleteName)
+{
+    List* targetList = findList(headOfList, listName); // Find the target list
+
+    Item* currentItem = targetList->firstItem;
+    Item* prevItem = NULL;
+
+    // Find the item to be deleted
+
+    while (currentItem != NULL && strcmp(currentItem->itemName, deleteName) != 0) {
+        prevItem = currentItem;
+        currentItem = currentItem->nextItem;
+    }
+
+    // Update the nextItem pointer of the previous item
+    if (prevItem == NULL) {
+        // Item to be deleted is the first item in the list
+        targetList->firstItem = currentItem->nextItem;
+    } else {
+        prevItem->nextItem = currentItem->nextItem;
+    }
+
+    // Free the memory of the item to be deleted
+    free(currentItem);
+
+
+    displayBoard(headOfList);
+}
+
 
 
 
