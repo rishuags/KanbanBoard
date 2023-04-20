@@ -59,6 +59,7 @@ void editBoard();
 void editListName(List* currentListPtr);
 void insertList(char* newListName);
 void deleteList(char* nameOfListToDelete);
+void saveBoard();
 
 
 
@@ -130,7 +131,9 @@ void mainMenu(){
                 editBoard();
                 break;
             case 5:
-                printf("Save Board to a file: \n");
+                printf("Saving to File...\n");
+                saveBoard();
+                printf("File Saved Successfully...\n");
                 break;
 
             default:
@@ -238,9 +241,15 @@ void displayBoard(){
 void loadFile(){
     printf("Loading Board File... \n\n");
 
+    char fileName[50];
+    printf("Enter File Name To Open\n");
+    fgetc(stdin);//Clears the standard Input
+    fgets(fileName, MAX_LIST_NAME_LENGTH, stdin);
+    fileName[strcspn(fileName, "\n")] = '\0';
+
     FILE *fp;
     //Opening File
-    fp = fopen("Board.txt", "r");
+    fp = fopen(fileName, "r");
 
     //Error Handling File
     if(fp==NULL){
@@ -816,4 +825,50 @@ void deleteList(char* nameOfListToDelete)
 
     free(currentListPtr);
     //displayBoard(headOfList);
+}
+
+void saveBoard(){
+    char fileName[50];
+    printf("Enter File Name Please\n");
+    fgetc(stdin);//Clears the standard Input
+    fgets(fileName, MAX_LIST_NAME_LENGTH, stdin);
+    fileName[strcspn(fileName, "\n")] = '\0';
+
+    FILE *fptr;
+
+    fptr = fopen(fileName, "w");
+
+    if(fptr==NULL){
+        printf("Error: Failed to Open the File\n");
+    }
+
+    if(headOfList==NULL){
+        printf("Board is Empty...Returning to Main Menu...\n");
+        mainMenu();
+
+    }
+    List *currentListPtr=NULL;
+    currentListPtr = headOfList;
+
+    while(currentListPtr!=NULL){
+        //Printing List Name
+        fprintf(fptr,"%s", currentListPtr->listName);
+
+        if(currentListPtr->firstItem==NULL){
+            printf("\nList %s is Empty...return to main menu to add something!\n\n", currentListPtr->listName);
+        }
+        Item *currentItemPtr = NULL;
+        currentItemPtr = currentListPtr->firstItem;
+
+        //Printing Items Names
+        while(currentItemPtr!=NULL){
+            fprintf(fptr,",%s", currentItemPtr->itemName);
+            currentItemPtr=currentItemPtr->nextItem;
+        }
+        fprintf(fptr,"\n", currentItemPtr->itemName);
+
+        currentListPtr=currentListPtr->nextList;
+    }
+    fclose(fptr);
+
 }
